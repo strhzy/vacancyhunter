@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <h1 class="mb-3">{{ vacancy.title }}</h1>
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body">
+                <p class="mb-2"><strong>Компания:</strong> <span class="text-primary">{{ vacancy.company }}</span></p>
+                <p class="mb-2"><strong>Опубликовано:</strong> {{ vacancy.created_at|date:"d.m.Y" }}</p>
+                <hr>
+                <h5>Описание:</h5>
+                <p class="lead">{{ vacancy.description }}</p>
+            </div>
+        </div>
+        {% if user.is_student %}
+        <div>
+            {% if already %}
+            <button class="btn btn-secondary btn-lg" disabled>✓ Вы уже откликнулись</button>
+            {% else %}
+            <form method="post" action="{% url 'apply' vacancy.id %}" enctype="multipart/form-data" class="mb-3">
+                {% csrf_token %}
+                {% if app_form %}
+                <div class="mb-3">
+                    {{ app_form.resume.label_tag }}
+                    {{ app_form.resume }}
+                    <div class="form-text">Поддерживаемые форматы: PDF, DOC, DOCX, RTF. Максимальный размер зависит от настроек сервера.</div>
+                </div>
+                {% endif %}
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-success btn-lg">Откликнуться на вакансию</button>
+                    <a href="/" class="btn btn-outline-secondary">Отмена</a>
+                </div>
+            </form>
+            {% endif %}
+        </div>
+        {% else %}
+        <div class="alert alert-warning">
+            <p class="mb-0">Только студенты могут откликаться на вакансии. <a href="/accounts/login/">Войдите</a> или <a href="/register/">зарегистрируйтесь</a>.</p>
+        </div>
+        {% endif %}
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm bg-light">
+            <div class="card-body">
+                <h5 class="card-title">Информация о вакансии</h5>
+                <p class="small text-muted">Опубликовано: {{ vacancy.created_at|date:"d.m.Y H:i" }}</p>
+                {% if vacancy.categories.all %}<p><strong>Категории:</strong></p><ul class="small">{% for cat in vacancy.categories.all %}<li>{{ cat.name }}</li>{% endfor %}</ul>{% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

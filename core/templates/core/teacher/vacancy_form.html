@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <h1 class="mb-4">{% if form.instance.pk %}Редактировать вакансию{% else %}Создать вакансию{% endif %}</h1>
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {% for err in form.non_field_errors %}{{ err }}<br>{% endfor %}
+                    </div>
+                    {% endif %}
+                    
+                    {% for field in form %}
+                        {% if field.name == 'categories' %}
+                        <!-- специальная верстка для категорий -->
+                        <div class="mb-3">
+                            <label class="form-label">{{ field.label }}</label>
+                            <div class="category-checkboxes border rounded p-3 bg-light">
+                                {% for choice_value, choice_label in field.field.choices %}
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="id_categories_{{ choice_value }}" name="categories" value="{{ choice_value }}" {% if choice_value in field.value %}checked{% endif %}>
+                                    <label class="form-check-label" for="id_categories_{{ choice_value }}">
+                                        {{ choice_label }}
+                                    </label>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% if field.errors %}
+                            <div class="text-danger small mt-1">
+                                {% for e in field.errors %}{{ e }}<br>{% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% elif field.name == 'active' %}
+                        <!-- верстка для чекбокса активности -->
+                        <div class="mb-3">
+                            <div class="form-check">
+                                {{ field }}
+                                <label class="form-check-label" for="{{ field.id_for_label }}">
+                                    {{ field.label }}
+                                </label>
+                            </div>
+                            {% if field.errors %}
+                            <div class="text-danger small mt-1">
+                                {% for e in field.errors %}{{ e }}<br>{% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% else %}
+                        <!-- остальные поля -->
+                        <div class="mb-3">
+                            {{ field.label_tag }}
+                            {{ field }}
+                            {% if field.errors %}
+                            <div class="text-danger small mt-1">
+                                {% for e in field.errors %}{{ e }}<br>{% endfor %}
+                            </div>
+                            {% endif %}
+                            {% if field.help_text %}
+                            <div class="form-text">{{ field.help_text }}</div>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    <div class="d-grid gap-2 d-sm-flex justify-content-sm-end">
+                        <a href="/teacher/dashboard/" class="btn btn-secondary">Отмена</a>
+                        <button type="submit" class="btn btn-success">Сохранить вакансию</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.category-checkboxes .form-check {
+    padding: 0.5rem 0;
+}
+.category-checkboxes .form-check-input {
+    margin-top: 0.3rem;
+}
+.category-checkboxes .form-check-label {
+    cursor: pointer;
+    margin-bottom: 0;
+}
+</style>
+{% endblock %}

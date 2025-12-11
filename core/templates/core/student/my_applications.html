@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1 class="mb-4">Мои отклики</h1>
+
+{% if apps %}
+<div class="table-responsive">
+    <table class="table table-hover align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>Вакансия</th>
+                <th>Компания</th>
+                <th>Дата отклика</th>
+                <th class="text-center">Статус</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for a in apps %}
+            <tr>
+                <td class="fw-bold">{{ a.vacancy.title }}</td>
+                <td>{{ a.vacancy.company }}</td>
+                <td class="text-muted">{{ a.created_at|date:"d.m.Y H:i" }}</td>
+                <td class="text-center">
+                    {% if a.notified_at %}
+                    <span class="badge bg-success">Уведомлено</span>
+                    {% else %}
+                    <span class="badge bg-warning text-dark">Ожидает</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="alert alert-info text-center py-5">
+    <h5>У вас ещё нет откликов</h5>
+    <p><a href="/" class="btn btn-primary btn-sm">Найти вакансию</a></p>
+</div>
+{% endif %}
+{% endblock %}
