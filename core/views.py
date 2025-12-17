@@ -9,6 +9,7 @@ from django.contrib.auth.views import LoginView
 from .forms import LoginForm, RegisterForm, ApplicationForm
 from .models import Vacancy, Category, Application
 from .forms import VacancyForm
+from bot.email import send_application_email
 #from telegram_bot.utils import notify_new_application
 
 #@login_required
@@ -70,6 +71,7 @@ def apply(request, pk):
     if created:
         app.mark_notified()
     app.save()
+    send_application_email(app)
 
     return redirect("my_applications")
 
